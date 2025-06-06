@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Ma'ruf Cell - Jual Pulsa & Top Up</title>
+    
+    <!-- ======================================================= -->
+    <!-- CSS DENGAN ANIMASI DAN DESAIN RESPONSIF BARU -->
+    <!-- ======================================================= -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        :root {
+            --bg-dark: #121212;
+            --primary-surface: #1e1e1e;
+            --secondary-surface: #2a2a2a;
+            --accent-yellow: #facc15;
+            --accent-purple: #a855f7;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --glow-yellow: rgba(250, 204, 21, 0.4);
+            --glow-purple: rgba(168, 85, 247, 0.4);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden; /* Mencegah scroll horizontal */
+        }
+        .view { display: none; }
+        .view.active { display: block; }
+        * { box-sizing: border-box; }
+
+        /* --- AUTHENTICATION PAGES --- */
+        .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .auth-form { background: var(--primary-surface); padding: 40px; border-radius: 12px; border: 1px solid var(--secondary-surface); width: 100%; max-width: 400px; text-align: center; }
+        .auth-form h2 { margin: 0 0 10px 0; font-size: 2rem; }
+        .auth-form .subtitle { margin-bottom: 30px; color: var(--text-secondary); }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px; background: var(--secondary-surface); border: 1px solid #444; border-radius: 8px; color: var(--text-primary); font-size: 1rem; transition: border-color 0.3s, box-shadow 0.3s; }
+        .form-group input:focus { outline: none; border-color: var(--accent-yellow); box-shadow: 0 0 0 3px var(--glow-yellow); }
+        .auth-form button { width: 100%; padding: 14px; background: var(--accent-yellow); color: var(--bg-dark); border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 700; transition: transform 0.2s; }
+        .auth-form button:hover { transform: scale(1.02); }
+        .switch-form { margin-top: 20px; font-size: 14px; }
+        .switch-form a { cursor: pointer; font-weight: bold; color: var(--accent-yellow); }
+
+        /* --- DASHBOARD STYLING --- */
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background-color: rgba(30, 30, 30, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--secondary-surface); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent-yellow); }
+        .main-nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 30px; }
+        .main-nav a, .logout-button { color: var(--text-secondary); font-weight: 600; padding: 5px 0; position: relative; cursor: pointer; background: none; border: none; font-size: 1rem; font-family: 'Poppins', sans-serif; text-decoration: none; transition: color 0.3s; }
+        .main-nav a::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background-color: var(--accent-yellow); transition: width 0.3s ease; }
+        .main-nav a:hover, .main-nav a.active { color: var(--text-primary); }
+        .main-nav a:hover::after, .main-nav a.active::after { width: 100%; }
+        .dropdown { position: relative; }
+        .dropdown-content { display: none; position: absolute; top: 120%; left: 50%; transform: translateX(-50%); background-color: var(--primary-surface); min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); border-radius: 8px; z-index: 1; overflow: hidden; }
+        .dropdown-content a { display: block; padding: 12px 16px; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .logout-button { color: #ef4444; }
+        .hamburger-menu { display: none; }
+
+        /* --- CONTENT STYLING --- */
+        .content-area { padding: 0 40px; }
+        .page-content { display: none; padding: 40px 0 60px 0; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page-content.active { display: block; }
+        .scroll-target { scroll-margin-top: 100px; }
+        
+        #beranda { min-height: calc(100vh - 72px); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #beranda h2, .page-content h2 { font-size: 2.5rem; font-weight: 700; }
+        
+        /* --- ANIMASI TEKS MENGALIR --- */
+        #welcome-title .highlight {
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-yellow), var(--accent-purple));
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: flow-gradient 3s linear infinite;
+        }
+        @keyframes flow-gradient {
+            to { background-position: 200% center; }
+        }
+
+        .page-content h2 { border-bottom: 2px solid var(--accent-yellow); padding-bottom: 10px; display: inline-block; margin-bottom: 30px; }
+        
+        /* --- PRODUCT GRID & CARD ANIMATION --- */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        .product-card { background: var(--primary-surface); border: 1px solid var(--secondary-surface); border-radius: 12px; padding: 25px; text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 0 25px var(--glow-yellow); }
+        .product-card img { width: 80px; height: 80px; margin-bottom: 20px; object-fit: contain; }
+        .product-card h3 { font-size: 1.1rem; margin: 0 0 10px 0; color: var(--text-primary); }
+        .product-card .price { font-size: 1.2rem; font-weight: 700; color: var(--accent-yellow); margin-bottom: 20px; }
+        .buy-button { background: var(--accent-yellow); color: var(--bg-dark); padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; transition: transform 0.2s ease; }
+        .buy-button:active { transform: scale(0.95); } /* Efek saat diklik */
+
+        /* ======================================= */
+        /* === DESAIN RESPONSIF & MOBILE UX BARU === */
+        /* ======================================= */
+        @media (max-width: 768px) {
+            .main-header { padding: 15px 20px; }
+            .content-area { padding: 0 20px; }
+            #beranda h2, .page-content h2 { font-size: 1.8rem; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .product-card { padding: 15px; }
+
+            /* --- Hamburger Menu & Navigasi Mobile --- */
+            .main-nav ul {
+                display: none; position: fixed; top: 71px; left: 0;
+                width: 100%; height: calc(100vh - 71px);
+                background-color: var(--bg-dark); flex-direction: column;
+                align-items: center; justify-content: flex-start;
+                padding-top: 50px; gap: 20px;
+                transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+            .main-nav ul.mobile-nav-active { display: flex; transform: translateX(0); }
+            
+            .hamburger-menu { display: flex; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; }
+            .hamburger-menu .bar { width: 25px; height: 3px; background-color: var(--text-primary); border-radius: 2px; transition: all 0.3s ease-in-out; }
+            
+            /* Animasi Hamburger menjadi X */
+            .hamburger-menu.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+            .hamburger-menu.active .bar:nth-child(2) { opacity: 0; }
+            .hamburger-menu.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+            /* --- Dropdown Mobile (Tap-to-Toggle) --- */
+            .dropdown { width: 100%; text-align: center; }
+            .dropdown .nav-link { display: flex; justify-content: center; align-items: center; gap: 8px; }
+            .dropdown .nav-link::after { content: '▼'; position: static; transition: transform 0.3s; } /* Panah dropdown */
+            .dropdown.mobile-dropdown-active .nav-link::after { transform: rotate(180deg); }
+            
+            .dropdown-content {
+                position: static; transform: none; box-shadow: none; background: none;
+                width: 100%; min-width: unset;
+                max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+                padding: 0;
+            }
+            .dropdown.mobile-dropdown-active .dropdown-content {
+                max-height: 500px; /* Tinggi maks agar animasi terlihat */
+                padding: 15px 0 0 0; /* Jarak dari menu induk */
+                display: flex; flex-direction: column; gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTML Tetap Sama, Hanya Penambahan ID & Class untuk ditarget JS -->
+    <div id="login-view" class="view">
+        <div class="auth-container">
+            <form id="login-form" class="auth-form">
+                <h2>Selamat Datang Kembali!</h2><p class="subtitle">Silakan login ke akun Anda.</p>
+                <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" required></div>
+                <div class="form-group"><label for="login-password">Password</label><input type="password" id="login-password" required></div>
+                <button type="submit">Login</button>
+                <p class="switch-form">Belum punya akun? <a id="go-to-register">Daftar di sini</a></p>
+            </form>
+        </div>
+    </div>
+    <div id="register-view" class="view">
+        <div class="auth-container">
+            <form id="register-form" class="auth-form">
+                <h2>Daftar Akun Baru</h2><p class="subtitle">Buat akun untuk mulai bertransaksi.</p>
+                <div class="form-group"><label for="register-nama">Nama Lengkap</label><input type="text" id="register-nama" required></div>
+                <div class="form-group"><label for="register-email">Email</label><input type="email" id="register-email" required></div>
+                <div class="form-group"><label for="register-password">Password</label><input type="password" id="register-password" required></div>
+                <button type="submit">Daftar</button>
+                <p class="switch-form">Sudah punya akun? <a id="go-to-login">Login di sini</a></p>
+            </form>
+        </div>
+    </div>
+    <div id="dashboard-view" class="view">
+        <header class="main-header">
+            <div class="logo">Al-Ma'ruf Cell</div>
+            <nav class="main-nav">
+                <ul id="main-nav-list">
+                    <li><a class="nav-link active" data-target="beranda">Beranda</a></li>
+                    <li><a class="nav-link" data-target="tentang">Tentang Kami</a></li>
+                    <li class="dropdown">
+                        <a id="produk-dropdown-toggle" class="nav-link">Produk</a>
+                        <div class="dropdown-content">
+                            <a class="nav-link" data-target="produk-pulsa">Pulsa</a>
+                            <a class="nav-link" data-target="produk-data">Pulsa Data</a>
+                            <a class="nav-link" data-target="produk-token">Token Listrik</a>
+                            <a class="nav-link" data-target="produk-topup">Top Up</a>
+                        </div>
+                    </li>
+                    <li><button id="logout-btn" class="logout-button">Logout</button></li>
+                </ul>
+            </nav>
+            <div id="hamburger-btn" class="hamburger-menu">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+        </header>
+        <main class="content-area">
+            <section id="beranda" class="page-content active"><h2 id="welcome-title">Selamat Datang di <span class="highlight">Al-Ma'ruf Cell</span></h2></section>
+            <section id="tentang" class="page-content scroll-target"><h2>Tentang Kami</h2><p><strong>Alamat:</strong> Jl. Blambangan Rt.04/Rw.02 Indonesia</p><p><strong>No. Telp/WA:</strong> 085792698607</p><p><strong>Email:</strong> almarufcell024@gmail.com</p></section>
+            <section id="produk-pulsa" class="page-content scroll-target"><h2>Produk Pulsa</h2><div class="product-grid" id="pulsa-grid"></div></section>
+            <section id="produk-data" class="page-content scroll-target"><h2>Produk Pulsa Data</h2><div class="product-grid" id="data-grid"></div></section>
+            <section id="produk-token" class="page-content scroll-target"><h2>Token Listrik</h2><div class="product-grid" id="token-grid"></div></section>
+            <section id="produk-topup" class="page-content scroll-target"><h2>Top Up Game</h2><div class="product-grid" id="topup-grid"></div></section>
+        </main>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- JAVASCRIPT DENGAN LOGIKA UI/UX BARU -->
+    <!-- ======================================================= -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const NOMOR_WHATSAPP_PENJUAL = '6285792698607';
+        // Data produk Anda... (tetap sama)
+        const produk = {
+            pulsa: [{ nama: 'Pulsa Telkomsel 10k', harga: 12000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 20k', harga: 22000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 30k', harga: 32000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 40k', harga: 42000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 50k', harga: 52000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 60k', harga: 62000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 70k', harga: 72000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 80k', harga: 82000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 90k', harga: 92000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa Telkomsel 100k', harga: 102000, img: 'img/telkomsel.jpg' },{ nama: 'Pulsa XL 10k', harga: 12000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 20k', harga: 22000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 30k', harga: 32000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 40k', harga: 42000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 50k', harga: 52000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 70k', harga: 72000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 80k', harga: 82000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 90k', harga: 92000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'XL 100k', harga: 102000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'AXIS 10k', harga: 12000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 20k', harga: 22000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 30k', harga: 32000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 40k', harga: 42000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 50k', harga: 52000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 60k', harga: 62000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 70k', harga: 72000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 80k', harga: 82000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 90k', harga: 92000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'AXIS 100k', harga: 102000, img: 'img/29f75a2d_AXIS.jpg' },{ nama: 'IM3 10k', harga: 12000, img: 'img/im3.png' },{ nama: 'IM3 20k', harga: 22000, img: 'img/im3.png' },{ nama: 'IM3 30k', harga: 32000, img: 'img/im3.png' },{ nama: 'IM3 40k', harga: 40000, img: 'img/im3.png' },{ nama: 'IM3 50k', harga: 52000, img: 'img/im3.png' },{ nama: 'IM3 60k', harga: 62000, img: 'img/im3.png' },{ nama: 'IM3 70k', harga: 72000, img: 'img/im3.png' },{ nama: 'IM3 80k', harga: 82000, img: 'img/im3.png' },{ nama: 'IM3 90k', harga: 92000, img: 'img/im3.png' },{ nama: 'IM3 100k', harga: 102000, img: 'img/im3.png' },{ nama: 'SMARTFREN 10k', harga: 12000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 20k', harga: 22000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 30k', harga: 32000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 40k', harga: 40000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 50k', harga: 52000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 60k', harga: 62000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 70k', harga: 72000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 80k', harga: 82000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 90k', harga: 92000, img: 'img/smrt.png' },{ nama: 'SMARTFREN 100k', harga: 102000, img: 'img/smrt.png' }],
+            data: [{ nama: 'Data 5GB XL', harga: 45000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'Data 10GB XL', harga: 80000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'Data 10GB XL', harga: 80000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'Data 10GB XL', harga: 80000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'Data 10GB XL', harga: 80000, img: 'img/7c0eed0a_410686bf_xl.jpg' },{ nama: 'Data 5GB IM3', harga: 45000, img: 'img/im3.png' },{ nama: 'Data 10GB IM3', harga: 80000, img: 'img/im3.png' },{ nama: 'Data 10GB IM3', harga: 80000, img: 'img/im3.png' },{ nama: 'Data 10GB IM3', harga: 80000, img: 'img/im3.png' },{ nama: 'Data 10GB IM3', harga: 80000, img: 'img/im3.png' },{ nama: 'Data 5GB TELKOMSEL', harga: 45000, img: 'img/telkomsel.jpg' },{ nama: 'Data 10GB TELKOMSEL', harga: 80000, img: 'img/telkomsel.jpg' },{ nama: 'Data 10GB TELKOMSEL', harga: 80000, img: 'img/telkomsel.jpg' },{ nama: 'Data 10GB TELKOMSEL', harga: 80000, img: 'img/telkomsel.jpg' },{ nama: 'Data 10GB TELKOMSEL', harga: 80000, img: 'img/telkomsel.jpg' },{ nama: 'Data 5GB AXIS', harga: 45000, img: 'img/axis.png' },{ nama: 'Data 10GB AXIS', harga: 80000, img: 'img/axis.png' },{ nama: 'Data 10GB AXIS', harga: 80000, img: 'img/axis.png' },{ nama: 'Data 10GB AXIS', harga: 80000, img: 'img/axis.png' },{ nama: 'Data 10GB AXIS', harga: 80000, img: 'img/axis.png' },{ nama: 'Data 5GB SMARTFREN', harga: 45000, img: 'img/smrt.png' },{ nama: 'Data 10GB SMARTFREN', harga: 80000, img: 'img/smrt.png' },{ nama: 'Data 10GB SMARTFREN', harga: 80000, img: 'img/smrt.png' },{ nama: 'Data 10GB SMARTFREN', harga: 80000, img: 'img/smrt.png' },{ nama: 'Data 10GB SMARTFREN', harga: 80000, img: 'img/smrt.png' }],
+            token: [{ nama: 'Token Listrik 20k', harga: 24000, img: 'img/0c40e51d_token.jpg' },{ nama: 'Token Listrik 50k', harga: 54000, img: 'img/0c40e51d_token.jpg' },{ nama: 'Token Listrik 100k', harga: 104000, img: 'img/0c40e51d_token.jpg' },{ nama: 'Token Listrik 300k', harga: 304000, img: 'img/0c40e51d_token.jpg' },{ nama: 'Token Listrik 500k', harga: 504000, img: 'img/0c40e51d_token.jpg' }],
+            topup: [{ nama: 'Diamonds ML 86', harga: 25000, img: 'img/Diamond.jpg' },{ nama: 'Top Up Diamond 50k', harga: 51500, img: 'img/Diamond.jpg' },{ nama: 'Top Up Diamond 50k', harga: 51500, img: 'img/Diamond.jpg' },{ nama: 'Top Up Diamond 50k', harga: 51500, img: 'img/Diamond.jpg' },{ nama: 'Top Up Diamond 50k', harga: 51500, img: 'img/Diamond.jpg' }],
+        };
+        const loginView = document.getElementById('login-view'), registerView = document.getElementById('register-view'), dashboardView = document.getElementById('dashboard-view');
+        const allViews = [loginView, registerView, dashboardView];
+        const loginForm = document.getElementById('login-form'), registerForm = document.getElementById('register-form');
+        const goToRegisterLink = document.getElementById('go-to-register'), goToLoginLink = document.getElementById('go-to-login');
+        function showView(viewToShow) { allViews.forEach(view => view.classList.remove('active')); viewToShow.classList.add('active'); }
+        function initializeApp() { const currentUser = JSON.parse(localStorage.getItem('currentUser')); currentUser ? (setupDashboard(currentUser), showView(dashboardView)) : showView(loginView); }
+        function setupDashboard(user) {
+            const welcomeText = user.nama ? `Halo, ${user.nama.split(' ')[0]}!` : 'Selamat Datang';
+            document.getElementById('welcome-title').innerHTML = `${welcomeText} <br>di <span class="highlight">Al-Ma'ruf Cell</span>`;
+            function createProductCard(item) { return `<div class="product-card"><img src="${item.img}" alt="${item.nama}"><h3>${item.nama}</h3><p class="price">Rp ${item.harga.toLocaleString('id-ID')}</p><button class="buy-button" data-nama="${item.nama}" data-harga="${item.harga}">Beli</button></div>`; }
+            document.getElementById('pulsa-grid').innerHTML = produk.pulsa.map(createProductCard).join(''); document.getElementById('data-grid').innerHTML = produk.data.map(createProductCard).join(''); document.getElementById('token-grid').innerHTML = produk.token.map(createProductCard).join(''); document.getElementById('topup-grid').innerHTML = produk.topup.map(createProductCard).join('');
+            document.querySelectorAll('.buy-button').forEach(button => { button.addEventListener('click', (e) => { const namaProduk = e.target.getAttribute('data-nama'), hargaProduk = e.target.getAttribute('data-harga'); const pesan = `Halo Al-Ma'ruf Cell, saya ${user.nama} mau beli produk ${namaProduk} dengan harga Rp ${parseInt(hargaProduk).toLocaleString('id-ID')}`; window.open(`https://api.whatsapp.com/send?phone=${NOMOR_WHATSAPP_PENJUAL}&text=${encodeURIComponent(pesan)}`, '_blank'); }); });
+        }
+        goToRegisterLink.addEventListener('click', (e) => { e.preventDefault(); showView(registerView); });
+        goToLoginLink.addEventListener('click', (e) => { e.preventDefault(); showView(loginView); });
+        registerForm.addEventListener('submit', (e) => { e.preventDefault(); const nama = document.getElementById('register-nama').value, email = document.getElementById('register-email').value, password = document.getElementById('register-password').value; if (localStorage.getItem(email)) return alert('Email sudah terdaftar!'); localStorage.setItem(email, JSON.stringify({ nama, password })); alert('Pendaftaran berhasil! Silakan login.'); registerForm.reset(); showView(loginView); });
+        loginForm.addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value, password = document.getElementById('login-password').value; const storedData = localStorage.getItem(email); if (!storedData) return alert('Email tidak ditemukan!'); const userData = JSON.parse(storedData); if (userData.password === password) { localStorage.setItem('currentUser', JSON.stringify({ nama: userData.nama, email })); loginForm.reset(); initializeApp(); } else { alert('Password salah!'); } });
+        document.getElementById('logout-btn').addEventListener('click', () => { if (confirm('Apakah Anda yakin ingin logout?')) { localStorage.removeItem('currentUser'); initializeApp(); } });
+
+        // === LOGIKA NAVIGASI BARU DENGAN MOBILE UX YANG LEBIH BAIK ===
+        const navLinks = document.querySelectorAll('.nav-link'), pageContents = document.querySelectorAll('.page-content');
+        const hamburgerBtn = document.getElementById('hamburger-btn'), navList = document.getElementById('main-nav-list');
+        const produkDropdownToggle = document.getElementById('produk-dropdown-toggle');
+
+        hamburgerBtn.addEventListener('click', () => { hamburgerBtn.classList.toggle('active'); navList.classList.toggle('mobile-nav-active'); });
+        
+        produkDropdownToggle.addEventListener('click', (e) => {
+            // Hanya aktifkan toggle di mode mobile
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                produkDropdownToggle.parentElement.classList.toggle('mobile-dropdown-active');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('data-target');
+                if (!targetId) return; // Abaikan jika tidak punya data-target (seperti toggle produk)
+                e.preventDefault();
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    pageContents.forEach(page => page.classList.remove('active')); targetContent.classList.add('active');
+                    navLinks.forEach(nav => nav.classList.remove('active')); link.classList.add('active');
+                    if (link.closest('.dropdown-content')) produkDropdownToggle.classList.add('active');
+                    if (targetId !== 'beranda') targetContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    else window.scrollTo({ top: 0, behavior: 'smooth' });
+                    // Tutup menu mobile setelah link diklik
+                    hamburgerBtn.classList.remove('active'); navList.classList.remove('mobile-nav-active');
+                    // Tutup dropdown mobile juga
+                    produkDropdownToggle.parentElement.classList.remove('mobile-dropdown-active');
+                }
+            });
+        });
+        initializeApp();
+    });
+    </script>
+</body>
+</html>
